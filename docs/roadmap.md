@@ -4,20 +4,6 @@ Items diferidos conscientemente durante el bootstrap v1. No son bugs;
 son decisiones de no implementar algo ahora por costo/valor o por
 dependencias externas no resueltas.
 
-## Ingestión del boletín ESSAR del ISP
-
-`urgencias_core.features.respiratory` es un stub que devuelve ceros
-con la forma correcta. El Instituto de Salud Pública publica
-semanalmente el boletín ESSAR (*Vigilancia Laboratorial Respiratoria*)
-con tasas positivas de VRS, influenza, SARS-CoV-2 y otros por semana
-epidemiológica. Ingerir esto produciría una señal fuerte para
-pronósticos respiratorios y pediátricos durante la campaña de invierno.
-
-- Fuente: `https://boletin.ispch.gob.cl/` (HTML + PDF)
-- Grano: semanal, publicado martes con rezago de 1–2 semanas
-- Trabajo: parsear HTML/PDF, deduplicar, exponer como time series
-  con las columnas de `RESPIRATORY_COLUMNS` ya definidas
-
 ## Soporte para archivos DEIS 2017–2019 (xlsx + mdb)
 
 El fetcher DEIS actual (`urgencias_core.data.deis`) solo parsea CSV.

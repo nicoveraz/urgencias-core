@@ -136,7 +136,6 @@ pronóstico con bandas cuantiles, y simulación Monte Carlo del censo
 | `urgencias_core.data.deis` | Cliente del DEIS MINSAL (fetch + caché + filtro a hospitales demo) con fallback offline al snapshot. |
 | `urgencias_core.features.calendar` | Festivos `holidays.CL`, días puente, calendario escolar, eventos regionales configurables (Semana Musical de Frutillar por defecto). |
 | `urgencias_core.features.weather` | Cliente de Open-Meteo con caché en disco, Puerto Montt por defecto. |
-| `urgencias_core.features.respiratory` | Stub respiratorio (ceros con la forma correcta; `TODO` para ingestión ESSAR del ISP). |
 | `urgencias_core.models.protocol` | Protocolo `Forecaster` y `HorizonSpec` (agnóstico del grano: horario, diario, semanal, mensual). |
 | `urgencias_core.models.lgb_quantile` | LightGBM quantile regression, un modelo por cuantil, features de calendario. |
 | `urgencias_core.eval.baselines` | `SeasonalNaiveBaseline` + envoltorios de `statsforecast` (AutoARIMA, AutoETS, AutoTheta, MSTL). |
@@ -184,10 +183,9 @@ Ver [`docs/decisions.md`](docs/decisions.md).
 
 ## Hoja de ruta
 
-Ver [`docs/roadmap.md`](docs/roadmap.md) para items diferidos: ingestión
-ESSAR del ISP, soporte para los archivos mdb/xlsx pre-2020 de DEIS,
-neuralforecast (TFT, NHITS), integración Andesmed para separar tiempo de
-workup del tiempo de boarding.
+Ver [`docs/roadmap.md`](docs/roadmap.md) para items diferidos: soporte
+para los archivos mdb/xlsx pre-2020 de DEIS, neuralforecast (TFT, NHITS),
+integración EMR para separar tiempo de workup del tiempo de boarding.
 
 ## Cita informal
 
@@ -289,10 +287,9 @@ See [`docs/decisions.md`](docs/decisions.md).
 
 ## Roadmap
 
-See [`docs/roadmap.md`](docs/roadmap.md) for deferred items: ISP ESSAR
-respiratory bulletin ingestion, xlsx/mdb support for DEIS 2017–2019
-publications, neuralforecast (TFT, NHITS), Andesmed integration to
-separate workup time from boarding time.
+See [`docs/roadmap.md`](docs/roadmap.md) for deferred items: xlsx/mdb
+support for DEIS 2017–2019 publications, neuralforecast (TFT, NHITS),
+EMR integration to separate workup time from boarding time.
 
 ## Informal citation
 
