@@ -161,7 +161,14 @@ def generate(start: str, end: str, seed: int = RNG_SEED) -> pd.DataFrame:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--start", default="2022-01-01")
-    parser.add_argument("--end", default="2024-12-31")
+    parser.add_argument("--end", default=None, help="End date (YYYY-MM-DD). Mutually exclusive with --years.")
+    parser.add_argument(
+        "--years",
+        type=int,
+        default=None,
+        help="Span length in whole years, ending on Dec 31 of start_year + years - 1. "
+        "Mutually exclusive with --end.",
+    )
     parser.add_argument("--seed", type=int, default=RNG_SEED)
     parser.add_argument(
         "--out",
@@ -173,7 +180,15 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    df = generate(args.start, args.end, args.seed)
+    if args.end and args.years:
+        parser.error("--end and --years are mutually exclusive")
+    if args.years is not None:
+        start = pd.Timestamp(args.start)
+        end_str = f"{start.year + args.years - 1}-12-31"
+    else:
+        end_str = args.end or "2024-12-31"
+
+    df = generate(args.start, end_str, args.seed)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     df.to_parquet(args.out, index=False)
 

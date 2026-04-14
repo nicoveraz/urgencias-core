@@ -82,6 +82,7 @@ def run_harness(
     all_forecasters = [(n, f, "baseline") for n, f in baselines.items()]
     all_forecasters += [(n, f, "candidate") for n, f in candidates.items()]
 
+    missing_quantiles: dict[str, list[int]] = {}
     for name, fc, role in all_forecasters:
         fc.fit(train, target_col)
         pred = fc.predict(eval_horizon)
@@ -91,23 +92,34 @@ def run_harness(
                 f"Forecaster {name!r} produced no timestamps aligned with the holdout window"
             )
         y_true = np.asarray(merged[target_col], dtype="float64")
-        y50 = np.asarray(merged["q50"], dtype="float64")
 
-        mae = float(np.mean(np.abs(y_true - y50)))
-        rmse = float(np.sqrt(np.mean((y_true - y50) ** 2)))
-        nonzero = y_true != 0
-        mape = (
-            float(np.mean(np.abs((y_true[nonzero] - y50[nonzero]) / y_true[nonzero])))
-            if nonzero.any()
-            else float("nan")
-        )
+        if "q50" in merged.columns:
+            y50 = np.asarray(merged["q50"], dtype="float64")
+            mae = float(np.mean(np.abs(y_true - y50)))
+            rmse = float(np.sqrt(np.mean((y_true - y50) ** 2)))
+            nonzero = y_true != 0
+            mape = (
+                float(np.mean(np.abs((y_true[nonzero] - y50[nonzero]) / y_true[nonzero])))
+                if nonzero.any()
+                else float("nan")
+            )
+        else:
+            mae = rmse = mape = float("nan")
 
         row: dict = {"name": name, "role": role, "mae": mae, "rmse": rmse, "mape": mape}
+        missing_for_this: list[int] = []
         for q in horizon.quantiles:
-            col = f"q{int(round(q * 100))}"
-            row[f"qloss_{int(round(q * 100))}"] = quantile_loss(
-                y_true, np.asarray(merged[col], dtype="float64"), q
-            )
+            q_int = int(round(q * 100))
+            col = f"q{q_int}"
+            if col not in merged.columns:
+                row[f"qloss_{q_int}"] = float("nan")
+                missing_for_this.append(q_int)
+            else:
+                row[f"qloss_{q_int}"] = quantile_loss(
+                    y_true, np.asarray(merged[col], dtype="float64"), q
+                )
+        if missing_for_this:
+            missing_quantiles[name] = missing_for_this
         rows.append(row)
 
     table = pd.DataFrame(rows).set_index("name")
@@ -116,8 +128,8 @@ def run_harness(
     warning_message = ""
     check_col = f"qloss_{int(round(check_quantile * 100))}"
     if candidates and check_col in table.columns:
-        baseline_table = table[table["role"] == "baseline"]
-        candidate_table = table[table["role"] == "candidate"]
+        baseline_table = table[table["role"] == "baseline"].dropna(subset=[check_col])
+        candidate_table = table[table["role"] == "candidate"].dropna(subset=[check_col])
         if len(baseline_table) > 0 and len(candidate_table) > 0:
             best_baseline = baseline_table[check_col].min()
             best_baseline_name = baseline_table[check_col].idxmin()
@@ -136,6 +148,12 @@ def run_harness(
     if verbose:
         print("\n=== Harness results (lower is better) ===")
         print(table.to_string(float_format=lambda v: f"{v:.4f}"))
+        if missing_quantiles:
+            print("\nNote: forecasters below did not produce all requested quantiles.")
+            print("NaN cells reflect a model-specific capability gap, not a bug.")
+            for name, qs in missing_quantiles.items():
+                qs_str = ", ".join(f"q{q}" for q in qs)
+                print(f"  - {name}: missing {qs_str}")
         if warning_triggered:
             banner = "=" * 78
             print(f"\n{banner}")
@@ -143,7 +161,11 @@ def run_harness(
             print(warning_message)
             print(banner)
 
-    return HarnessReport(table=table, warning_triggered=warning_triggered, warning_message=warning_message)
+    return HarnessReport(
+        table=table,
+        warning_triggered=warning_triggered,
+        warning_message=warning_message,
+    )
 
 
 __all__ = ["HarnessReport", "run_harness", "quantile_loss"]
