@@ -81,7 +81,8 @@ def holiday_multiplier(dates: pd.DatetimeIndex) -> np.ndarray:
     try:
         import holidays as pyholidays
 
-        cl = pyholidays.country_holidays("CL", years=range(dates.year.min(), dates.year.max() + 1))
+        years = dates.to_series().dt.year
+        cl = pyholidays.country_holidays("CL", years=range(int(years.min()), int(years.max()) + 1))
     except Exception:
         cl = {}
     mult = np.ones(len(dates))
@@ -97,8 +98,9 @@ def generate(start: str, end: str, seed: int = RNG_SEED) -> pd.DataFrame:
     rng = np.random.default_rng(seed)
     days = pd.date_range(start=start, end=end, freq="D")
 
-    dow = days.dayofweek.to_numpy()
-    doy = days.dayofyear.to_numpy()
+    days_s = days.to_series()
+    dow = days_s.dt.dayofweek.to_numpy()
+    doy = days_s.dt.dayofyear.to_numpy()
 
     lam = (
         BASE_DAILY_ARRIVALS

@@ -128,8 +128,8 @@ def run_harness(
     warning_message = ""
     check_col = f"qloss_{int(round(check_quantile * 100))}"
     if candidates and check_col in table.columns:
-        baseline_table = table[table["role"] == "baseline"].dropna(subset=[check_col])
-        candidate_table = table[table["role"] == "candidate"].dropna(subset=[check_col])
+        baseline_table = table[table["role"] == "baseline"].dropna(subset=check_col)
+        candidate_table = table[table["role"] == "candidate"].dropna(subset=check_col)
         if len(baseline_table) > 0 and len(candidate_table) > 0:
             best_baseline = baseline_table[check_col].min()
             best_baseline_name = baseline_table[check_col].idxmin()
