@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+venv/
+
+# Build
+dist/
+build/
+
+# Data and models (reference repo: no real data committed)
+/data/raw/
+/data/processed/
+/data/external/
+/models/
+/outputs/
+
+# Parquet files by default are not committed, except the synthetic fixture
+*.parquet
+!tests/fixtures/*.parquet
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Env
+.env
+.env.*
+!.env.example
