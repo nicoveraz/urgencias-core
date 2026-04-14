@@ -27,7 +27,7 @@ Esto significa:
    cuando las condiciones actuales son inusuales.
 
 Una mejora futura sería ingerir el timestamp de decisión de admisión
-desde Andesmed (cuando un médico de ER decide "este paciente sube") para
+(cuando un médico de ER decide "este paciente sube") para
 separar tiempo de workup del tiempo de boarding. Esto requiere o un
 nuevo campo en el export del EMR, o un proxy derivado de timestamps de
 entrada de órdenes. Ítem candidato de sprint 3 en `roadmap.md`.
@@ -40,7 +40,7 @@ El repositorio incluye dos scripts de demo que muestran partes
 complementarias del pipeline.
 
 `scripts/demo_synthetic.py` corre el pipeline completo — carga la fixture
-visit-level, computa la serie horaria, ajusta un forecaster de línea
+visit-level, calcula la serie horaria, ajusta un forecaster de línea
 base, y corre la simulación Monte Carlo. Produce tres PNG en `outputs/`.
 
 `scripts/demo_deis.py` corre solo la capa de forecasting contra datos
@@ -53,10 +53,10 @@ conteos agregados por establecimiento-día-grupo de causa — no registros
 visit-level con timestamps de llegada y alta. Esto tiene una consecuencia
 directa:
 
-- DEIS puede alimentar la **capa de forecasting** a grano diario o
-  semanal. Sobre datos reales de hospitales chilenos. Fine.
+- DEIS puede alimentar la **capa de forecasting** con detalle diario o
+  semanal. Sobre datos reales de hospitales chilenos.
 - DEIS **no puede** alimentar el motor de simulación porque la
-  simulación requiere distribuciones de LOS condicionales a agudeza y
+  simulación requiere distribuciones de LOS condicionales a gravedad y
   hora de llegada, que solo existen en datos visit-level.
 
 Un único demo combinado tendría que o (a) simular sobre datos
@@ -69,7 +69,7 @@ esto (datos visit-level).
 ## Manejo del período COVID en datos DEIS
 
 Por defecto, `scripts/demo_deis.py` excluye los años 2020 y 2021 del
-entrenamiento. La razón: la pandemia disruptó los patrones de atención
+entrenamiento. La razón: la pandemia perturbó los patrones de atención
 de urgencia de forma que no es representativa del régimen actual, y el
 período post-pandemia (2022 a presente) ya provee 4+ años de datos
 estables — suficiente para entrenar sin tener que modelar explícitamente
@@ -101,12 +101,12 @@ Para que quede registrado en el código y no solo en el README:
 
 ---
 
-## Forecaster protocol: agnóstico del grano
+## Forecaster protocol: agnóstico del nivel de detalle
 
 `HorizonSpec.grain` acepta un alias de frecuencia de pandas arbitrario
 (`"h"`, `"D"`, `"W-MON"`, `"ME"`, etc.). Las implementaciones del
 protocolo son responsables de adaptarse internamente — por ejemplo,
-`SeasonalNaiveBaseline` usa una llave estacional distinta por grano
+`SeasonalNaiveBaseline` usa una llave estacional distinta por detalle
 (`(dow, hour)` para horario, `(month, dow)` para diario,
 `(isoweek,)` para semanal, `(month,)` para mensual).
 
@@ -118,16 +118,16 @@ demo DEIS (semanal/diario), sin forks.
 
 La versión en core usa features de calendario (hora, día de la semana,
 mes, día del año, encodings sin/cos, banderas de fin de semana) y no
-usa lags autoregresivos. Esta es una elección deliberada:
+usa lags autoregresivos. Esta es por elección:
 
-- El modelo es agnóstico del grano y del horizonte sin depender de una
+- El modelo es agnóstico del nivel de detalle y del horizonte sin depender de una
   política de lag-awareness.
 - Es honesto sobre la información disponible en tiempo de pronóstico:
   no existe leakage implícito.
 - Hospitales que claan este código obtienen un modelo funcional sin
   supuestos sobre su estructura temporal.
 
-La desventaja: no puede leveragear información reciente (último día,
+La desventaja: no puede considerar información reciente (último día,
 última semana). Para horizontes cortos — en particular la decisión de
 surge a 0–24 horas — los modelos con lags AR mejoran materialmente
 sobre esta versión. Esos viven en `eunosia-forecast` (Horizon A).
@@ -139,7 +139,7 @@ mejor modelo candidato no supera al mejor baseline (SeasonalNaive o el
 mejor de statsforecast) por al menos 5% en el cuantil de chequeo (P80
 por defecto), se imprime una advertencia claramente visible a stdout.
 
-Por qué existe: evita shippear un modelo complejo que no se gana su
+Por qué existe: evita usar un modelo complejo que no se gana su
 complejidad. Una red TFT entrenada sobre 200k parámetros que empata a
 AutoETS sobre pinball loss no debería entrar en producción aun si pasa
 tests unitarios.

@@ -43,14 +43,6 @@ explícitamente, se puede escribir un parser específico que ignore la
 primera fila y use un mapeo de columnas fijo para ese año. Valor bajo
 porque 2020 está excluido por la política COVID por defecto.
 
-## neuralforecast (TFT, NHITS)
-
-`eunosia-forecast` reserva Chronos (foundation model) como baseline
-zero-shot. Los modelos neuronales entrenables (TFT, NHITS) están
-earmarked para Sprint 2 bajo `neuralforecast` de Nixtla. Requiere
-dataset de tamaño decente (~200k filas visit-level ayudan) y
-validación rigurosa contra los baselines de statsforecast.
-
 ## Backtesting rolling en lugar de holdout simple
 
 El harness actual hace un holdout simple (las últimas N observaciones
@@ -58,11 +50,11 @@ son test, todo lo anterior es train). Un backtest rolling (sliding
 window, refit cada K pasos) da métricas estadísticamente más robustas y
 detecta model drift en el tiempo. No es crítico para v1.
 
-## Integración Andesmed para separar workup de boarding
+## Integración EMR para separar workup de boarding
 
 Ver `docs/decisions.md` sección "LOS, boarding, y qué nos dicen (y no
 nos dicen) los datos". Ingerir el timestamp de decisión de admisión
-desde Andesmed permitiría distinguir tiempo clínico activo del tiempo
+desde EMR permitiría distinguir tiempo clínico activo del tiempo
 de espera por cama. Requiere o una nueva columna en el export del EMR o
 un proxy por timestamps de entrada de órdenes. Sprint 3 candidato en
 el plan de `eunosia-forecast`.
@@ -78,5 +70,5 @@ código no pretende ser un CLI instalable.
 
 Varios módulos usan `print()` (demos) y otros usan `logging.getLogger(__name__)`
 (deis, simulation). Estandarizar sobre logging con un handler por
-defecto en los demos haría las corridas más configurables. No es
+defecto en los demos haría los usos más configurables. No es
 crítico.
