@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}urgencias-core — Análisis descriptivo{% endblock %}
+{% block content %}
+<section>
+  <h2>Análisis descriptivo</h2>
+  <p class="muted">
+    Total de atenciones: <strong>{{ "{:,}".format(overall.total_visits) }}</strong> &middot;
+    LOS mediano: <strong>{{ "%.2f"|format(overall.median_los) }}</strong> h &middot;
+    Ocupación media: <strong>{{ "%.2f"|format(overall.mean_occupancy) }}</strong> &middot;
+    Hora pico: <strong>{{ overall.peak_hour }}h</strong>
+  </p>
+
+  <h3>Ocupación por hora y día de la semana</h3>
+  <img src="data:image/png;base64,{{ occupancy_chart }}" alt="Hill plot de ocupación" class="chart">
+
+  <h3>Llegadas por hora y día de la semana</h3>
+  <img src="data:image/png;base64,{{ arrivals_chart }}" alt="Hill plot de llegadas" class="chart">
+
+  <h3>Resumen de LOS por agudeza</h3>
+  {{ los_table|safe }}
+</section>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}urgencias-core — Inicio{% endblock %}
+{% block content %}
+<section>
+  <h2>Servidor de referencia</h2>
+  <p>
+    Esta interfaz muestra qué hace el código de <code>urgencias-core</code>
+    sin requerir leerlo. No es un dashboard clínico. Es una vista mínima,
+    server-rendered, para que cualquier hospital chileno que clone el
+    repositorio pueda abrir el navegador y ver los resultados sobre sus
+    propios datos.
+  </p>
+  <p class="muted">
+    Dataset cargado: <code>{{ data_path }}</code> &middot;
+    {{ "{:,}".format(n_visits) }} atenciones &middot;
+    {{ "{:,}".format(n_hours) }} horas de historia &middot;
+    rango {{ history_start.strftime("%Y-%m-%d") }} a {{ history_end.strftime("%Y-%m-%d") }}.
+  </p>
+
+  <ul class="tiles">
+    <li>
+      <a href="/baseline"><strong>Análisis descriptivo</strong></a>
+      <p>Ocupación por hora del día y día de la semana, mediana y percentiles de LOS por agudeza.</p>
+    </li>
+    <li>
+      <a href="/forecast"><strong>Pronóstico</strong></a>
+      <p>Corre el forecaster configurado sobre la serie horaria reciente y muestra bandas de incertidumbre.</p>
+    </li>
+    <li>
+      <a href="/simulation"><strong>Simulación</strong></a>
+      <p>Monte Carlo de censo a 24 horas con censo inicial, llegadas por hora y agudezas configurables.</p>
+    </li>
+  </ul>
+</section>
+{% endblock %}

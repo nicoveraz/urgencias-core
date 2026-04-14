@@ -1,0 +1,25 @@
+# Example configuration for the urgencias-core reference server.
+#
+# Copy to ``urgencias-core.toml`` in the project root and edit to point at
+# your own visit-level parquet. If this file is absent, the server runs
+# against the packaged synthetic fixture in tests/fixtures/.
+
+[data]
+# Path to your visit-level parquet. Must match the loader schema (see
+# urgencias_core/data/loader.py for required columns).
+parquet = "tests/fixtures/synthetic_ed_visits.parquet"
+
+[forecast]
+# Forecaster: "seasonal_naive" or "lgb_quantile".
+forecaster = "seasonal_naive"
+# Column of the hourly time series to forecast.
+target = "arrivals"
+# Hours ahead to produce.
+horizon_hours = 168
+
+[simulation]
+horizon_hours = 24
+n_sims = 200
+current_census = 0
+start_hour = 12
+# arrivals_per_hour = 5.0   # omit to use the recent history mean

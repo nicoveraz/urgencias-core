@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}urgencias-core — Simulación{% endblock %}
+{% block content %}
+<section>
+  <h2>Simulación Monte Carlo</h2>
+  <p class="muted">
+    Parámetros: horizonte {{ horizon }} h &middot;
+    {{ n_sims }} trayectorias &middot;
+    censo inicial {{ current_census }} &middot;
+    hora de inicio {{ start_hour }}h &middot;
+    llegadas/hora {{ arrivals_per_hour }}.
+    Ajuste vía query string:
+    <code>/simulation?horizon=24&amp;n_sims=500&amp;current_census=20&amp;start_hour=18&amp;arrivals=8</code>.
+  </p>
+
+  <img src="data:image/png;base64,{{ chart }}" alt="Fan chart de simulación" class="chart">
+
+  <h3>Distribución por hora</h3>
+  {{ table|safe }}
+
+  <h3>Probabilidad máxima de exceder umbrales</h3>
+  <table class="data-table">
+    <thead>
+      <tr><th>Umbral de censo</th><th>Probabilidad máxima (cualquier hora)</th></tr>
+    </thead>
+    <tbody>
+      {% for row in exceedance_rows %}
+      <tr>
+        <td>{{ row.threshold }}</td>
+        <td>{{ "%.2f"|format(row.max_prob) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

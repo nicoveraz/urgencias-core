@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}urgencias-core — Pronóstico{% endblock %}
+{% block content %}
+<section>
+  <h2>Pronóstico</h2>
+  <p class="muted">
+    Modelo: <code>{{ forecaster }}</code> &middot;
+    variable: <code>{{ target }}</code> &middot;
+    horizonte: {{ horizon_hours }} h.
+    Parámetros por query string, ejemplo:
+    <code>/forecast?forecaster=lgb_quantile&amp;horizon=24&amp;target=arrivals</code>.
+  </p>
+
+  <img src="data:image/png;base64,{{ chart }}" alt="Gráfico de pronóstico" class="chart">
+
+  <h3>Tabla (primeras {{ rows_shown }} de {{ rows_total }})</h3>
+  {{ table|safe }}
+</section>
+{% endblock %}
