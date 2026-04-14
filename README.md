@@ -3,16 +3,6 @@
 Código de referencia para análisis, simulación y forecasting de servicios de
 urgencia en Chile. Fundación abierta de **Eunosia**.
 
-## 🚀 Demo en vivo
-
-Sube tu CSV de visitas y obtén un pronóstico rápido de ocupación,
-directamente en el navegador, sin instalar nada:
-
-**👉 [nicoveraz.github.io/urgencias-core](https://nicoveraz.github.io/urgencias-core/)**
-
-El demo procesa todo localmente (los datos no salen de tu dispositivo) y
-sirve como punto de entrada al tier comercial de Eunosia.
-
 ---
 
 ## Atribución
@@ -211,16 +201,6 @@ MIT. Ver [LICENSE](LICENSE).
 
 Reference code for Chilean emergency department analytics, simulation, and
 forecasting. Open foundation of **Eunosia**.
-
-## 🚀 Live demo
-
-Drop your visit-level CSV and get a quick occupancy forecast, all in the
-browser — no install required:
-
-**👉 [nicoveraz.github.io/urgencias-core](https://nicoveraz.github.io/urgencias-core/)**
-
-All processing happens client-side (your data never leaves the device).
-The demo is a gateway to Eunosia's commercial tier.
 
 ## Attribution
 
