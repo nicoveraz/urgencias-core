@@ -1123,6 +1123,15 @@ wheels = [
 ]
 
 [[package]]
+name = "tabulate"
+version = "0.10.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/46/58/8c37dea7bbf769b20d58e7ace7e5edfe65b849442b00ffcdd56be88697c6/tabulate-0.10.0.tar.gz", hash = "sha256:e2cfde8f79420f6deeffdeda9aaec3b6bc5abce947655d17ac662b126e48a60d", size = 91754, upload-time = "2026-03-04T18:55:34.402Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/99/55/db07de81b5c630da5cbf5c7df646580ca26dfaefa593667fc6f2fe016d2e/tabulate-0.10.0-py3-none-any.whl", hash = "sha256:f0b0622e567335c8fabaaa659f1b33bcb6ddfe2e496071b743aa113f8774f2d3", size = 39814, upload-time = "2026-03-04T18:55:31.284Z" },
+]
+
+[[package]]
 name = "threadpoolctl"
 version = "3.6.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1207,6 +1216,7 @@ dependencies = [
     { name = "scikit-learn" },
     { name = "statsforecast", version = "2.0.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12' and sys_platform == 'win32'" },
     { name = "statsforecast", version = "2.0.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12' or sys_platform != 'win32'" },
+    { name = "tabulate" },
     { name = "uvicorn" },
 ]
 
@@ -1232,6 +1242,7 @@ requires-dist = [
     { name = "pydantic", specifier = ">=2.6" },
     { name = "scikit-learn", specifier = ">=1.4" },
     { name = "statsforecast", specifier = ">=1.7" },
+    { name = "tabulate", specifier = ">=0.9" },
     { name = "uvicorn", specifier = ">=0.29" },
 ]
 
