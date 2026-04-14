@@ -47,6 +47,64 @@ repo (~40 000 atenciones, 2022–2024) y genera tres PNG en `outputs/`. El
 demo DEIS descarga datos reales (o cae al snapshot offline) y escribe
 tablas de backtesting + pronósticos a 6 meses.
 
+## Qué produce el pipeline
+
+Las figuras a continuación provienen de `docs/img/` y son el resultado
+directo de correr los dos scripts de demo contra los datos incluidos.
+
+### 1. De atenciones a serie horaria de ocupación
+
+El loader `urgencias_core.data.timeseries` convierte el parquet
+visit-level (una fila por atención, con timestamps de ingreso y egreso)
+a una serie horaria de censo usando el truco de cumsum de eventos
+(+1 al ingreso, –1 al egreso, cumsum reindexado a la grilla horaria).
+La figura muestra la última semana de la fixture sintética: un ciclo
+diurno claro con valles nocturnos y picos vespertinos, consistentes con
+el patrón esperado de una urgencia chilena de tamaño medio.
+
+![Ocupación horaria sintética](docs/img/demo_synthetic_occupancy.png)
+
+### 2. Capa de forecasting — pronóstico horario 48 h
+
+Sobre esa misma serie, el baseline `SeasonalNaiveBaseline` produce un
+pronóstico horario a 48 horas con intervalos cuantiles P50–P80 y
+P80–P95. Para el demo sintético basta este baseline — los modelos más
+fuertes (`AutoARIMA`, `AutoETS`, `LGBQuantile`) se comparan en el harness
+de evaluación y viven bajo la misma interfaz `Forecaster`.
+
+![Pronóstico horario 48h sintético](docs/img/demo_synthetic_forecast.png)
+
+### 3. Motor de simulación Monte Carlo
+
+El motor `urgencias_core.simulation.engine` toma llegadas futuras
+(muestreadas desde el pronóstico) y para cada llegada samplea un LOS
+empírico condicional en (agudeza, hora de llegada). Iterando M réplicas
+produce bandas de incertidumbre del censo 24 horas hacia adelante —
+la base para decisiones de surge y tablas de turnos.
+
+![Simulación Monte Carlo 24h](docs/img/demo_synthetic_simulation.png)
+
+### 4. Datos reales — backtest semanal sobre DEIS
+
+El demo DEIS corre la misma capa de forecasting contra atenciones de
+urgencia reales del Hospital de Puerto Montt. El holdout separa las
+últimas 12 semanas como test y entrena sobre las 52 previas. La figura
+muestra que `AutoARIMA` captura la mediana del alza post-verano 2026
+con el verdadero dentro de la banda P80–P95 en la mayoría de las
+semanas — evidencia de que el pipeline sintético no está sobreajustado
+al régimen de la fixture.
+
+![Holdout 12 semanas Puerto Montt](docs/img/deis_holdout_hospital_base_puerto_montt.png)
+
+### 5. Pronóstico operacional a 6 meses
+
+Con el modelo validado, el demo reentrena sobre toda la historia y
+emite un pronóstico semanal a 26 semanas — el horizonte útil para
+planificación de turnos, presupuesto e insumos. La banda P80–P95 se
+ensancha con el horizonte, como es de esperar.
+
+![Forecast 6 meses Puerto Montt](docs/img/deis_forecast_hospital_base_puerto_montt.png)
+
 ## Qué hay adentro
 
 | Módulo | Para qué sirve |
