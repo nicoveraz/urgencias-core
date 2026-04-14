@@ -105,6 +105,28 @@ ensancha con el horizonte, como es de esperar.
 
 ![Forecast 6 meses Puerto Montt](docs/img/deis_forecast_hospital_base_puerto_montt.png)
 
+### 6. Dashboard de referencia
+
+El servidor FastAPI (`uv run uvicorn urgencias_core.server.app:app`)
+expone 4 rutas con los mismos gráficos del pipeline pero vivos en el
+navegador. Es deliberadamente minimal — Jinja2 + matplotlib embebido
+como base64, sin JavaScript. Pensado como punto de partida para que un
+hospital lo clone y adapte.
+
+<p align="center">
+<img src="docs/img/dashboard_index.png" width="48%" alt="Dashboard - inicio"/>
+<img src="docs/img/dashboard_baseline.png" width="48%" alt="Dashboard - análisis descriptivo"/>
+</p>
+<p align="center">
+<img src="docs/img/dashboard_forecast.png" width="48%" alt="Dashboard - pronóstico"/>
+<img src="docs/img/dashboard_simulation.png" width="48%" alt="Dashboard - simulación"/>
+</p>
+
+De izquierda a derecha, arriba abajo: página de inicio, análisis
+descriptivo (ocupación y llegadas por hora × día de la semana),
+pronóstico con bandas cuantiles, y simulación Monte Carlo del censo
+24 horas.
+
 ## Qué hay adentro
 
 | Módulo | Para qué sirve |
